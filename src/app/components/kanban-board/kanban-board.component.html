@@ -1,0 +1,52 @@
+<!-- Kanban Board Header -->
+<mat-toolbar color="primary" class="kanban-header">
+  <mat-icon>dashboard</mat-icon>
+  <span class="header-title">Kanban Task Manager</span>
+  <span class="spacer"></span>
+  <button mat-raised-button color="accent" class="add-task-btn">
+    <mat-icon>add</mat-icon>
+    Add Task
+  </button>
+</mat-toolbar>
+
+<!-- Kanban Board Container -->
+<div class="kanban-container">
+  <div class="kanban-board">
+    
+    <!-- Loop through each column -->
+    <div class="kanban-column" *ngFor="let column of columns">
+      
+      <!-- Column Header -->
+      <app-column-header 
+        [title]="column.title" 
+        [taskCount]="getTaskCount(column.id)"
+        [status]="column.status">
+      </app-column-header>
+      
+      <!-- Column Content -->
+      <mat-card class="column-card">
+        <mat-card-content class="column-content">
+          
+          <!-- Drop Zone for Tasks (will add drag-drop later) -->
+          <div class="task-list" [id]="column.id + '-list'">
+            
+            <!-- Placeholder when no tasks -->
+            <div *ngIf="column.tasks.length === 0" class="empty-column">
+              <mat-icon class="empty-icon">inbox</mat-icon>
+              <p class="empty-text">Drop tasks here</p>
+            </div>
+            
+            <!-- Task cards will go here in next step -->
+            <div *ngFor="let task of column.tasks" class="task-placeholder">
+              <!-- Task cards will be implemented in Step 3 -->
+            </div>
+            
+          </div>
+          
+        </mat-card-content>
+      </mat-card>
+      
+    </div>
+    
+  </div>
+</div>

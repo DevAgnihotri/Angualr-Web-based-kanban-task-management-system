@@ -1,0 +1,9 @@
+<div class="column-header">
+  <div class="header-content">
+    <div class="status-indicator" [style.background-color]="getStatusColor()"></div>
+    <h3 class="column-title">{{ title }}</h3>
+    <mat-chip class="task-count-badge" [style.background-color]="getStatusColor()">
+      {{ taskCount }}
+    </mat-chip>
+  </div>
+</div>
