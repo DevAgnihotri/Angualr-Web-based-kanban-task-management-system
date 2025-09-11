@@ -39,9 +39,9 @@ export class MyComponentComponent {
 **🎨 Template (`my-component.component.html`)**
 
 ```html
-<div class="p-4 bg-white rounded shadow">
+<div class="card p-4">
   <h2>{{ message }}</h2>
-  <button (click)="onButtonClick()">Click me!</button>
+  <button (click)="onButtonClick()" class="btn-primary">Click me!</button>
   <p>Clicked {{ clickCount }} times</p>
 </div>
 ```
@@ -69,12 +69,12 @@ import { MyComponentComponent } from './my-component/my-component.component';
 ### HTML Template
 
 ```html
-<div class="max-w-sm mx-auto mt-8 p-6 bg-white rounded-lg shadow-md">
-  <h2 class="text-xl font-bold mb-3">My Simple Component</h2>
+<div class="card text-center">
+  <h2 class="mb-4">My Simple Component</h2>
 
-  <button (click)="onButtonClick()" class="bg-blue-500 hover:bg-blue-700 text-white py-2 px-4 rounded">Click me! 🎯</button>
+  <button (click)="onButtonClick()" class="btn-primary mb-4">Click me! 🎯</button>
 
-  <p *ngIf="clickCount > 0" class="text-green-600 mt-2">Clicked {{ clickCount }} times! 🎊</p>
+  <p *ngIf="clickCount > 0" class="text-primary">Clicked {{ clickCount }} times! 🎊</p>
 </div>
 ```
 
@@ -91,16 +91,20 @@ export class MyComponentComponent {
 }
 ```
 
-## 🎨 Styling with Tailwind CSS
+## 🎨 Styling with CSS Classes
 
-Use Tailwind classes in your HTML:
+Use the CSS utility classes in your HTML:
 
-- `bg-blue-500` - Blue background
-- `text-white` - White text
-- `p-4` - Padding
+- `card` - Card container with shadow and padding
+- `btn-primary` - Blue button with hover effects
+- `text-center` - Center aligned text
+- `text-primary` - Primary blue color text
+- `text-secondary` - Gray color text
+- `mb-2`, `mb-4` - Margin bottom spacing
+- `p-2`, `p-4` - Padding
 - `rounded` - Rounded corners
 - `shadow` - Drop shadow
-- `hover:bg-blue-700` - Darker blue on hover
+- `priority-low`, `priority-medium`, `priority-high` - Priority badges
 
 ## 🔧 Common Patterns
 
@@ -156,9 +160,10 @@ src/app/
 ## 💡 Tips
 
 - Always import your component in `app.component.ts`
-- Use Tailwind classes for quick styling
+- Use CSS utility classes for quick styling
 - Add `CommonModule` import if using *ngIf or *ngFor
 - Check browser console for errors (F12)
 - Component selector is `app-[component-name]`
+- All CSS classes are defined in `src/styles.css`
 
 ---
