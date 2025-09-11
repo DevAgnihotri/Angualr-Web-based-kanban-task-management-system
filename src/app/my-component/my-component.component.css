@@ -1,0 +1,39 @@
+.component-container {
+  max-width: 300px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+.component-container h2 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.component-container p {
+  color: #666;
+  margin-bottom: 15px;
+}
+
+.click-button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.click-button:hover {
+  background-color: #0056b3;
+}
+
+.click-count {
+  color: #28a745;
+  font-weight: bold;
+}
