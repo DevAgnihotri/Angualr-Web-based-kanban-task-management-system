@@ -27,18 +27,23 @@
       <mat-card class="column-card">
         <mat-card-content class="column-content">
           
-          <!-- Drop Zone for Tasks (will add drag-drop later) -->
+          <!-- Drop Zone for Tasks -->
           <div class="task-list" [id]="column.id + '-list'">
+            
+            <!-- Task Cards -->
+            <div *ngFor="let task of column.tasks" class="task-item">
+              <app-task-card 
+                [task]="task"
+                (editTask)="onEditTask($event)"
+                (deleteTask)="onDeleteTask($event)"
+                (updateTask)="onUpdateTask($event)">
+              </app-task-card>
+            </div>
             
             <!-- Placeholder when no tasks -->
             <div *ngIf="column.tasks.length === 0" class="empty-column">
               <mat-icon class="empty-icon">inbox</mat-icon>
               <p class="empty-text">Drop tasks here</p>
-            </div>
-            
-            <!-- Task cards will go here in next step -->
-            <div *ngFor="let task of column.tasks" class="task-placeholder">
-              <!-- Task cards will be implemented in Step 3 -->
             </div>
             
           </div>

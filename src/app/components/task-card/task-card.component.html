@@ -1,0 +1,71 @@
+<mat-card class="task-card" [class.dragging]="isDragging">
+  
+  <!-- Task Header -->
+  <mat-card-header class="task-header">
+    
+    <!-- Priority Badge -->
+    <div class="priority-badge" [style.background-color]="getPriorityColor()">
+      <mat-icon class="priority-icon">{{ getPriorityIcon() }}</mat-icon>
+      <span class="priority-text">{{ task.priority | uppercase }}</span>
+    </div>
+    
+    <!-- Action Menu -->
+    <div class="task-actions">
+      <button mat-icon-button [matMenuTriggerFor]="taskMenu" class="action-button">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      
+      <mat-menu #taskMenu="matMenu">
+        <button mat-menu-item (click)="onEditClick()">
+          <mat-icon>edit</mat-icon>
+          <span>Edit</span>
+        </button>
+        <button mat-menu-item (click)="onDeleteClick()" class="delete-item">
+          <mat-icon>delete</mat-icon>
+          <span>Delete</span>
+        </button>
+      </mat-menu>
+    </div>
+    
+  </mat-card-header>
+  
+  <!-- Task Content -->
+  <mat-card-content class="task-content">
+    
+    <!-- Task Title -->
+    <h3 class="task-title">{{ task.title }}</h3>
+    
+    <!-- Task Description -->
+    <p class="task-description" *ngIf="task.description">
+      {{ task.description }}
+    </p>
+    
+    <!-- Task Tags -->
+    <div class="task-tags" *ngIf="task.tags && task.tags.length > 0">
+      <mat-chip-set>
+        <mat-chip *ngFor="let tag of task.tags" class="task-tag">
+          {{ tag }}
+        </mat-chip>
+      </mat-chip-set>
+    </div>
+    
+  </mat-card-content>
+  
+  <!-- Task Footer -->
+  <mat-card-actions class="task-footer" *ngIf="task.dueDate || task.assignee">
+    
+    <!-- Due Date -->
+    <div class="due-date" *ngIf="task.dueDate" [class.overdue]="isOverdue()">
+      <mat-icon class="date-icon">schedule</mat-icon>
+      <span class="date-text">{{ formatDate(task.dueDate) }}</span>
+    </div>
+    
+    <!-- Assignee -->
+    <div class="assignee" *ngIf="task.assignee">
+      <mat-icon class="assignee-icon">person</mat-icon>
+      <span class="assignee-text">{{ task.assignee }}</span>
+    </div>
+    
+  </mat-card-actions>
+  
+</mat-card>

@@ -69,6 +69,15 @@
   background-color: #f8f9ff;
 }
 
+/* Task Items */
+.task-item {
+  margin-bottom: 8px;
+}
+
+.task-item:last-child {
+  margin-bottom: 0;
+}
+
 /* Empty Column State */
 .empty-column {
   display: flex;
