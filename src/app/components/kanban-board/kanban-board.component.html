@@ -28,16 +28,33 @@
         <mat-card-content class="column-content">
           
           <!-- Drop Zone for Tasks -->
-          <div class="task-list" [id]="column.id + '-list'">
+          <div 
+            class="task-list" 
+            [id]="column.id + '-list'"
+            cdkDropList
+            [cdkDropListData]="column.tasks"
+            [cdkDropListConnectedTo]="getConnectedDropLists()"
+            (cdkDropListDropped)="onTaskDrop($event)">
             
             <!-- Task Cards -->
             <div *ngFor="let task of column.tasks" class="task-item">
-              <app-task-card 
-                [task]="task"
-                (editTask)="onEditTask($event)"
-                (deleteTask)="onDeleteTask($event)"
-                (updateTask)="onUpdateTask($event)">
-              </app-task-card>
+              <div cdkDrag>
+                <app-task-card 
+                  [task]="task"
+                  [isDragging]="false"
+                  (editTask)="onEditTask($event)"
+                  (deleteTask)="onDeleteTask($event)"
+                  (updateTask)="onUpdateTask($event)">
+                </app-task-card>
+                
+                <!-- Custom drag placeholder -->
+                <div class="drag-placeholder" *cdkDragPlaceholder>
+                  <div class="placeholder-content">
+                    <mat-icon>drag_indicator</mat-icon>
+                    <span>Drop here</span>
+                  </div>
+                </div>
+              </div>
             </div>
             
             <!-- Placeholder when no tasks -->
