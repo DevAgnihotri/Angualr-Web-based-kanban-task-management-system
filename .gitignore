@@ -40,3 +40,9 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
+
+# Documentation and planning files
+KANBAN-PROJECT-PLANNER.md
+Steps_based_report.md
+COMPONENT-GUIDE.md
+STEP-*-COMPLETION-REPORT.md
