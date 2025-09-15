@@ -51,14 +51,13 @@ export class KanbanBoardComponent implements OnInit, OnDestroy {
     if (!column) return;
 
     const dialogRef = this.dialog.open(AddTaskDialogComponent, {
-      width: '800px',
+      width: '600px',
       maxWidth: '90vw',
       data: {
         columnStatus: column.status,
         columnTitle: column.title
       },
-      disableClose: true,
-      panelClass: 'custom-dialog-container'
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -71,12 +70,10 @@ export class KanbanBoardComponent implements OnInit, OnDestroy {
 
   onEditTask(task: Task): void {
     const dialogRef = this.dialog.open(EditTaskDialogComponent, {
-      width: '850px',
+      width: '650px',
       maxWidth: '90vw',
-      maxHeight: '85vh',
       data: { task },
-      disableClose: true,
-      panelClass: 'custom-dialog-container'
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -173,69 +170,35 @@ export class KanbanBoardComponent implements OnInit, OnDestroy {
     this.snackBar.open(message, 'Close', config);
   }
 
-  private loadSampleTasks(): void {
-    // Sample tasks for testing
-    const sampleTasks: Task[] = [
-      {
-      id: '1',
-      title: 'Decorate the clubhouse',
-      description: 'Hang up balloons and streamers for the big clubhouse party!',
-      status: TaskStatus.TODO,
-      priority: TaskPriority.HIGH,
-      createdDate: new Date(),
-      dueDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-      assignee: 'Mickey Mouse',
-      tags: ['party', 'decorations']
-      },
-      {
-      id: '2',
-      title: 'Bake Goofy’s favorite cake',
-      description: 'Mix ingredients and bake a yummy cake for Goofy’s birthday.',
-      status: TaskStatus.TODO,
-      priority: TaskPriority.MEDIUM,
-      createdDate: new Date(),
-      dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      assignee: 'Minnie Mouse',
-      tags: ['baking', 'birthday']
-      },
-      {
-      id: '3',
-      title: 'Paint Daisy’s flower pots',
-      description: 'Add bright colors and fun patterns to Daisy’s garden pots.',
-      status: TaskStatus.IN_PROGRESS,
-      priority: TaskPriority.HIGH,
-      createdDate: new Date(),
-      dueDate: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000),
-      assignee: 'Donald Duck',
-      tags: ['painting', 'garden']
-      },
-      {
-      id: '4',
-      title: 'Practice the Hot Dog Dance',
-      description: 'Rehearse the Hot Dog Dance for the clubhouse talent show.',
-      status: TaskStatus.IN_PROGRESS,
-      priority: TaskPriority.LOW,
-      createdDate: new Date(),
-      tags: ['dance', 'talent show']
-      },
-      {
-      id: '5',
-      title: 'Send invitations to friends',
-      description: 'Invite Pluto and all the friends to the clubhouse party!',
-      status: TaskStatus.DONE,
-      priority: TaskPriority.MEDIUM,
-      createdDate: new Date(),
-      assignee: 'Goofy',
-      tags: ['invitations', 'friends']
-      }
-    ];
+  // Utility methods for template
+  getTaskStatistics() {
+    return this.taskService.getTaskStatistics();
+  }
 
-    // Distribute tasks to columns based on their status
-    sampleTasks.forEach(task => {
-      const column = this.columns.find(col => col.status === task.status);
-      if (column) {
-        column.tasks.push(task);
-      }
-    });
+  exportData(): void {
+    const data = this.taskService.getCurrentColumns();
+    const dataStr = JSON.stringify(data, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(dataBlob);
+    link.download = `kanban-data-${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    
+    this.showSnackBar('Data exported successfully!', 'success');
+  }
+
+  clearAllData(): void {
+    if (confirm('Are you sure you want to clear all tasks? This action cannot be undone.')) {
+      this.taskService.clearAllData();
+      this.showSnackBar('All data cleared!', 'warn');
+    }
+  }
+
+  resetToSampleData(): void {
+    if (confirm('Reset to sample data? This will replace all current tasks.')) {
+      this.taskService.resetToSampleData();
+      this.showSnackBar('Data reset to sample data!', 'info');
+    }
   }
 }

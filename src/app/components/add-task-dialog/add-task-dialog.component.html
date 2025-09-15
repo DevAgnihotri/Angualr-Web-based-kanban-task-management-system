@@ -1,0 +1,133 @@
+<div class="dialog-container">
+  <!-- Dialog Header -->
+  <div mat-dialog-title class="dialog-header">
+    <div class="header-content">
+      <mat-icon class="header-icon">add_task</mat-icon>
+      <h2 class="dialog-title">Add New Task</h2>
+      <span class="column-badge">{{ data.columnTitle }}</span>
+    </div>
+  </div>
+
+  <!-- Dialog Content -->
+  <div mat-dialog-content class="dialog-content">
+    <form [formGroup]="taskForm" class="task-form">
+      
+      <!-- Title and Description Row -->
+      <div class="form-row">
+        <!-- Task Title -->
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Task Title</mat-label>
+          <input matInput formControlName="title" placeholder="Enter task title" maxlength="100">
+          <mat-icon matSuffix>title</mat-icon>
+          <mat-hint>{{ taskForm.get('title')?.value?.length || 0 }}/100</mat-hint>
+          <mat-error *ngIf="taskForm.get('title')?.invalid && taskForm.get('title')?.touched">
+            {{ getErrorMessage('title') }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Priority -->
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Priority</mat-label>
+          <mat-select formControlName="priority">
+            <mat-option *ngFor="let priority of priorities" [value]="priority">
+              <div class="priority-option">
+                <mat-icon [color]="getPriorityColor(priority)">{{ getPriorityIcon(priority) }}</mat-icon>
+                <span>{{ priority | titlecase }}</span>
+              </div>
+            </mat-option>
+          </mat-select>
+          <mat-icon matSuffix>priority_high</mat-icon>
+        </mat-form-field>
+      </div>
+
+      <!-- Task Description -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" 
+                  placeholder="Enter task description" 
+                  rows="2" maxlength="500"></textarea>
+        <mat-icon matSuffix>description</mat-icon>
+        <mat-hint>{{ taskForm.get('description')?.value?.length || 0 }}/500</mat-hint>
+        <mat-error *ngIf="taskForm.get('description')?.invalid && taskForm.get('description')?.touched">
+          {{ getErrorMessage('description') }}
+        </mat-error>
+      </mat-form-field>
+
+      <!-- Assignee and Due Date Row -->
+      <div class="form-row">
+        <!-- Assignee -->
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Assignee</mat-label>
+          <input matInput formControlName="assignee" placeholder="Assign to someone" maxlength="50">
+          <mat-icon matSuffix>person</mat-icon>
+          <mat-error *ngIf="taskForm.get('assignee')?.invalid && taskForm.get('assignee')?.touched">
+            {{ getErrorMessage('assignee') }}
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Due Date -->
+        <mat-form-field appearance="outline" class="half-width">
+          <mat-label>Due Date</mat-label>
+          <input matInput formControlName="dueDate" [matDatepicker]="picker" readonly>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+      </div>
+
+      <!-- Tags Row -->
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Tags</mat-label>
+        <input matInput formControlName="tags" placeholder="tag1, tag2, tag3">
+        <mat-icon matSuffix>local_offer</mat-icon>
+        <mat-hint>Separate with commas</mat-hint>
+      </mat-form-field>
+
+      <!-- Form Summary Card -->
+      <mat-card class="form-summary" *ngIf="taskForm.get('title')?.value">
+        <mat-card-content>
+          <div class="summary-title">
+            <mat-icon>preview</mat-icon>
+            Preview
+          </div>
+          <div class="preview-content">
+            <h4>{{ taskForm.get('title')?.value }}</h4>
+            <p *ngIf="taskForm.get('description')?.value">{{ taskForm.get('description')?.value }}</p>
+            <div class="preview-meta">
+              <mat-chip-set>
+                <mat-chip [color]="getPriorityColor(taskForm.get('priority')?.value)">
+                  <mat-icon matChipAvatar>{{ getPriorityIcon(taskForm.get('priority')?.value) }}</mat-icon>
+                  {{ taskForm.get('priority')?.value | titlecase }}
+                </mat-chip>
+                <mat-chip *ngIf="taskForm.get('assignee')?.value">
+                  <mat-icon matChipAvatar>person</mat-icon>
+                  {{ taskForm.get('assignee')?.value }}
+                </mat-chip>
+                <mat-chip *ngIf="taskForm.get('dueDate')?.value">
+                  <mat-icon matChipAvatar>schedule</mat-icon>
+                  {{ taskForm.get('dueDate')?.value | date:'MMM d, y' }}
+                </mat-chip>
+              </mat-chip-set>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+    </form>
+  </div>
+
+  <!-- Dialog Actions -->
+  <div mat-dialog-actions class="dialog-actions">
+    <button mat-button (click)="onCancel()" class="cancel-button">
+      <mat-icon>close</mat-icon>
+      Cancel
+    </button>
+    <button mat-raised-button 
+            color="primary" 
+            (click)="onSubmit()" 
+            [disabled]="taskForm.invalid"
+            class="create-button">
+      <mat-icon>add</mat-icon>
+      Create Task
+    </button>
+  </div>
+</div>

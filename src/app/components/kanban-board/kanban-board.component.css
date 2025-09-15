@@ -69,6 +69,32 @@
   background-color: #f8f9ff;
 }
 
+/* Add Task Section */
+.add-task-section {
+  padding: 8px 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.add-task-column-btn {
+  width: 100%;
+  height: 40px;
+  border: 2px dashed #1976d2;
+  background: transparent;
+  color: #1976d2;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.add-task-column-btn:hover {
+  background: #e3f2fd;
+  border-style: solid;
+  transform: translateY(-1px);
+}
+
+.add-task-column-btn mat-icon {
+  margin-right: 8px;
+}
+
 /* CDK Drop List Styling */
 .task-list.cdk-drop-list-dragging {
   background-color: #e3f2fd;
