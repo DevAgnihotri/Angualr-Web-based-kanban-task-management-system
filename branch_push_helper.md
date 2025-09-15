@@ -15,7 +15,7 @@ git init
 Then run:
 
 ```bash
-git remote add origin https://github.com/Springboard-Internship-2025/Web-Based-Kanban-Task-Manager-with-Drag-and-Drop-Functionality_September_2025
+git remote add origin https://github.com/Springboard-Internship-2025/Web-Based-Kanban-Task-Manager-with-Drag-and-Drop-Functionality_September_2025.git
 ```
 
 Check if it’s linked:
