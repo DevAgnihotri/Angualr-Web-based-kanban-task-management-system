@@ -1,4 +1,4 @@
-# 🚀 MILESTONE 1: Core Kanban System Implementation
+# MILESTONE 1: Core Kanban System Implementation
 
 <div align="center">
 
@@ -7,7 +7,7 @@
 ![Material](https://img.shields.io/badge/Material_UI-007FFF?style=for-the-badge&logo=mui&logoColor=white)
 ![RxJS](https://img.shields.io/badge/RxJS-B7178C?style=for-the-badge&logo=reactivex&logoColor=white)
 
-**Status:** ✅ **COMPLETED** | **Progress:** 85% | **Date:** September 16, 2025
+**Date:** September 16, 2025
 
 </div>
 
@@ -17,7 +17,7 @@
 
 A modern, responsive web-based Kanban task management system built with Angular 17+ and Material Design. Features drag-and-drop functionality, comprehensive CRUD operations, and a clean, intuitive user interface designed for productivity and scalability.
 
-### 🎯 **Core Objectives Achieved**
+### **Core Objectives Achieved**
 
 - ✅ **Responsive UI/UX** with Material Design principles
 - ✅ **Full CRUD Operations** for task management
@@ -28,7 +28,7 @@ A modern, responsive web-based Kanban task management system built with Angular 
 
 ---
 
-## 🏗️ **Technical Architecture**
+## **Technical Architecture**
 
 ### **Frontend Stack**
 
@@ -65,7 +65,7 @@ src/app/
 
 ---
 
-## 🔧 **Component Implementation Details**
+## **Component Implementation Details**
 
 ### **1. KanbanBoardComponent**
 
