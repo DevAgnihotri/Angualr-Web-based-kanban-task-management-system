@@ -11,7 +11,8 @@ export class TaskService {
 
   constructor() {
     // Load data from localStorage if available
-    this.loadFromStorage();
+    // TEMPORARILY COMMENTED OUT - causing terminal errors
+    // this.loadFromStorage();
   }
 
   // Get current columns data
@@ -164,14 +165,17 @@ export class TaskService {
   // Update columns and save to storage
   private updateColumns(columns: Column[]): void {
     this.columnsSubject.next(columns);
-    this.saveToStorage();
+    // TEMPORARILY COMMENTED OUT - causing terminal errors
+    // this.saveToStorage();
   }
 
   // Save data to localStorage
   private saveToStorage(): void {
     try {
-      const data = this.getCurrentColumns();
-      localStorage.setItem('kanban-data', JSON.stringify(data));
+      // TEMPORARILY COMMENTED OUT - causing terminal errors
+      // const data = this.getCurrentColumns();
+      // localStorage.setItem('kanban-data', JSON.stringify(data));
+      console.log('Save to storage temporarily disabled');
     } catch (error) {
       console.error('Error saving to localStorage:', error);
     }
@@ -180,20 +184,22 @@ export class TaskService {
   // Load data from localStorage
   private loadFromStorage(): void {
     try {
-      const savedData = localStorage.getItem('kanban-data');
-      if (savedData) {
-        const columns = JSON.parse(savedData);
-        // Convert date strings back to Date objects
-        const processedColumns = columns.map((column: Column) => ({
-          ...column,
-          tasks: column.tasks.map((task: any) => ({
-            ...task,
-            createdDate: new Date(task.createdDate),
-            dueDate: task.dueDate ? new Date(task.dueDate) : undefined
-          }))
-        }));
-        this.columnsSubject.next(processedColumns);
-      }
+      // TEMPORARILY COMMENTED OUT - causing terminal errors
+      // const savedData = localStorage.getItem('kanban-data');
+      // if (savedData) {
+      //   const columns = JSON.parse(savedData);
+      //   // Convert date strings back to Date objects
+      //   const processedColumns = columns.map((column: Column) => ({
+      //     ...column,
+      //     tasks: column.tasks.map((task: any) => ({
+      //       ...task,
+      //       createdDate: new Date(task.createdDate),
+      //       dueDate: task.dueDate ? new Date(task.dueDate) : undefined
+      //     }))
+      //   }));
+      //   this.columnsSubject.next(processedColumns);
+      // }
+      console.log('Load from storage temporarily disabled');
     } catch (error) {
       console.error('Error loading from localStorage:', error);
       // Fall back to initial data if loading fails
@@ -248,6 +254,8 @@ export class TaskService {
         id: 'todo',
         title: 'TO-DO',
         status: TaskStatus.TODO,
+        tasks: [] // COMMENTED OUT SAMPLE TASKS - starting with empty board
+        /* SAMPLE TASKS COMMENTED OUT:
         tasks: [
           {
             id: 'task-1',
@@ -271,11 +279,14 @@ export class TaskService {
             tags: ['research', 'ux']
           }
         ]
+        */
       },
       {
         id: 'in-progress',
         title: 'IN PROGRESS',
         status: TaskStatus.IN_PROGRESS,
+        tasks: [] // COMMENTED OUT SAMPLE TASKS - starting with empty board
+        /* SAMPLE TASKS COMMENTED OUT:
         tasks: [
           {
             id: 'task-3',
@@ -299,11 +310,14 @@ export class TaskService {
             tags: ['testing', 'unit-tests']
           }
         ]
+        */
       },
       {
         id: 'done',
         title: 'DONE',
         status: TaskStatus.DONE,
+        tasks: [] // COMMENTED OUT SAMPLE TASKS - starting with empty board
+        /* SAMPLE TASKS COMMENTED OUT:
         tasks: [
           {
             id: 'task-5',
@@ -317,6 +331,7 @@ export class TaskService {
             tags: ['setup', 'git', 'ci-cd']
           }
         ]
+        */
       }
     ];
   }
