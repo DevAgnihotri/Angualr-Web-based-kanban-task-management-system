@@ -254,8 +254,8 @@ export class TaskService {
         id: 'todo',
         title: 'TO-DO',
         status: TaskStatus.TODO,
-        tasks: [] // COMMENTED OUT SAMPLE TASKS - starting with empty board
-        /* SAMPLE TASKS COMMENTED OUT:
+        //tasks: [] // COMMENTED OUT SAMPLE TASKS - starting with empty board
+        //SAMPLE TASKS COMMENTED OUT:
         tasks: [
           {
             id: 'task-1',
@@ -279,14 +279,14 @@ export class TaskService {
             tags: ['research', 'ux']
           }
         ]
-        */
+        
       },
       {
         id: 'in-progress',
         title: 'IN PROGRESS',
         status: TaskStatus.IN_PROGRESS,
-        tasks: [] // COMMENTED OUT SAMPLE TASKS - starting with empty board
-        /* SAMPLE TASKS COMMENTED OUT:
+        //tasks: [] // COMMENTED OUT SAMPLE TASKS - starting with empty board
+         // SAMPLE TASKS COMMENTED OUT:
         tasks: [
           {
             id: 'task-3',
@@ -310,14 +310,14 @@ export class TaskService {
             tags: ['testing', 'unit-tests']
           }
         ]
-        */
+        
       },
       {
         id: 'done',
         title: 'DONE',
         status: TaskStatus.DONE,
-        tasks: [] // COMMENTED OUT SAMPLE TASKS - starting with empty board
-        /* SAMPLE TASKS COMMENTED OUT:
+        //tasks: [] // COMMENTED OUT SAMPLE TASKS - starting with empty board
+        //SAMPLE TASKS COMMENTED OUT:
         tasks: [
           {
             id: 'task-5',
@@ -331,7 +331,7 @@ export class TaskService {
             tags: ['setup', 'git', 'ci-cd']
           }
         ]
-        */
+        
       }
     ];
   }
