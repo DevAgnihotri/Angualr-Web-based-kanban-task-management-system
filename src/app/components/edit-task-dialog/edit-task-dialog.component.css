@@ -14,7 +14,7 @@
   background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%);
   color: white;
   margin: -24px -24px 16px -24px;
-  padding: 20px 40px;
+  padding: 20px 48px;
   border-radius: 4px 4px 0 0;
 }
 
@@ -119,6 +119,11 @@
   font-size: 18px;
   width: 18px;
   height: 18px;
+  margin-right: 8px;
+}
+
+.priority-option span, .status-option span {
+  margin-left: 4px;
 }
 
 /* Changes Alert */
@@ -289,7 +294,7 @@
   
   .dialog-header {
     margin: -16px -16px 12px -16px;
-    padding: 12px 16px;
+    padding: 12px 40px;
   }
   
   .header-content {

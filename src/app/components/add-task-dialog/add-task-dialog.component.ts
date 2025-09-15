@@ -117,10 +117,10 @@ export class AddTaskDialogComponent implements OnInit {
 
   getPriorityIcon(priority: TaskPriority): string {
     switch (priority) {
-      case TaskPriority.HIGH: return 'keyboard_arrow_up';
-      case TaskPriority.MEDIUM: return 'drag_handle';
-      case TaskPriority.LOW: return 'keyboard_arrow_down';
-      default: return 'drag_handle';
+      case TaskPriority.HIGH: return 'arrow_upward';
+      case TaskPriority.MEDIUM: return 'remove';
+      case TaskPriority.LOW: return 'arrow_downward';
+      default: return 'remove';
     }
   }
 }

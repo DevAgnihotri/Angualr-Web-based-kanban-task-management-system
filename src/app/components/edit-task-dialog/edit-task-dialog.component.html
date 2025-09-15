@@ -37,10 +37,7 @@
           <mat-label>Priority</mat-label>
           <mat-select formControlName="priority">
             <mat-option *ngFor="let priority of priorities" [value]="priority">
-              <div class="priority-option">
-                <mat-icon [color]="getPriorityColor(priority)">{{ getPriorityIcon(priority) }}</mat-icon>
-                <span>{{ priority | titlecase }}</span>
-              </div>
+              {{ priority | titlecase }}
             </mat-option>
           </mat-select>
           <mat-icon matSuffix>priority_high</mat-icon>
@@ -67,10 +64,7 @@
           <mat-label>Status</mat-label>
           <mat-select formControlName="status">
             <mat-option *ngFor="let status of statuses" [value]="status">
-              <div class="status-option">
-                <mat-icon [style.color]="getStatusColor(status)">{{ getStatusIcon(status) }}</mat-icon>
-                <span>{{ getStatusDisplayName(status) }}</span>
-              </div>
+              {{ getStatusDisplayName(status) }}
             </mat-option>
           </mat-select>
           <mat-icon matSuffix>track_changes</mat-icon>

@@ -30,10 +30,7 @@
           <mat-label>Priority</mat-label>
           <mat-select formControlName="priority">
             <mat-option *ngFor="let priority of priorities" [value]="priority">
-              <div class="priority-option">
-                <mat-icon [color]="getPriorityColor(priority)">{{ getPriorityIcon(priority) }}</mat-icon>
-                <span>{{ priority | titlecase }}</span>
-              </div>
+              {{ priority | titlecase }}
             </mat-option>
           </mat-select>
           <mat-icon matSuffix>priority_high</mat-icon>
