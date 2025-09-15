@@ -84,9 +84,6 @@ _Full Kanban board layout with three columns showing the complete implementation
 ![Empty Task Manager](Screenshots/Empty_task_manager.png)
 _Clean empty board state ready for task creation_
 
-![Column Component](Screenshots/Column_Component.png)
-_Individual column structure with header and task container_
-
 **Key Methods:**
 
 ```typescript
