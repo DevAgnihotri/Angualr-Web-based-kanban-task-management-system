@@ -1,5 +1,3 @@
----
-
 ### 🔹 Step 1. Initialize Git in your project folder
 
 If not already:
