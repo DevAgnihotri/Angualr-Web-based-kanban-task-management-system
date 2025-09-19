@@ -3,10 +3,32 @@
   <mat-icon>dashboard</mat-icon>
   <span class="header-title">Kanban Task Manager</span>
   <span class="spacer"></span>
-  <button mat-raised-button color="accent" class="add-task-btn" (click)="onAddTask('todo')">
+  <button 
+    mat-raised-button 
+    color="accent" 
+    class="add-task-btn" 
+    [matMenuTriggerFor]="addTaskMenu"
+    aria-label="Add new task">
     <mat-icon>add</mat-icon>
     Add Task
+    <mat-icon>arrow_drop_down</mat-icon>
   </button>
+  
+  <!-- Add Task Menu -->
+  <mat-menu #addTaskMenu="matMenu" class="add-task-menu">
+    <button mat-menu-item (click)="onAddTask('todo')" class="menu-item todo-item">
+      <mat-icon class="menu-icon">circle</mat-icon>
+      <span>Add to TO-DO</span>
+    </button>
+    <button mat-menu-item (click)="onAddTask('in-progress')" class="menu-item progress-item">
+      <mat-icon class="menu-icon">schedule</mat-icon>
+      <span>Add to IN PROGRESS</span>
+    </button>
+    <button mat-menu-item (click)="onAddTask('done')" class="menu-item done-item">
+      <mat-icon class="menu-icon">check_circle</mat-icon>
+      <span>Add to DONE</span>
+    </button>
+  </mat-menu>
 </mat-toolbar>
 
 <!-- Kanban Board Container -->
