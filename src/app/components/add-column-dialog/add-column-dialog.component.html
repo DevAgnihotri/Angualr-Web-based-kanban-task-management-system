@@ -1,0 +1,131 @@
+<div class="dialog-container">
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <div class="header-content">
+      <mat-icon class="header-icon">view_column</mat-icon>
+      <h2 class="dialog-title">Add New Column</h2>
+    </div>
+    <button mat-icon-button mat-dialog-close class="close-btn" aria-label="Close dialog">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Dialog Content -->
+  <div class="dialog-content" mat-dialog-content>
+    <form [formGroup]="columnForm" class="column-form">
+      
+      <!-- Column Title Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">title</mat-icon>
+          <h3 class="section-title">Column Information</h3>
+        </div>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Column Title</mat-label>
+          <input matInput 
+                 placeholder="Enter column title (e.g., Code Review, Testing)" 
+                 formControlName="title"
+                 maxlength="25"
+                 #titleInput>
+          <mat-hint align="end">{{titleInput.value.length || 0}}/25</mat-hint>
+          <mat-error *ngIf="columnForm.get('title')?.hasError('required')">
+            Column title is required
+          </mat-error>
+          <mat-error *ngIf="columnForm.get('title')?.hasError('minlength')">
+            Title must be at least 2 characters long
+          </mat-error>
+          <mat-error *ngIf="columnForm.get('title')?.hasError('maxlength')">
+            Title cannot exceed 25 characters
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Position Selection Section -->
+      <div class="form-section">
+        <div class="section-header">
+          <mat-icon class="section-icon">swap_horiz</mat-icon>
+          <h3 class="section-title">Column Position</h3>
+        </div>
+        
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Choose Position</mat-label>
+          <mat-select formControlName="position" placeholder="Select where to place the column">
+            <mat-option value="1">
+              <div class="position-option">
+                <mat-icon>first_page</mat-icon>
+                <span>Position 1 - First Column</span>
+              </div>
+            </mat-option>
+            <mat-option value="2">
+              <div class="position-option">
+                <mat-icon>looks_two</mat-icon>
+                <span>Position 2 - Second Column</span>
+              </div>
+            </mat-option>
+            <mat-option value="3">
+              <div class="position-option">
+                <mat-icon>looks_3</mat-icon>
+                <span>Position 3 - Third Column</span>
+              </div>
+            </mat-option>
+            <mat-option value="4">
+              <div class="position-option">
+                <mat-icon>last_page</mat-icon>
+                <span>Position 4 - Last Column</span>
+              </div>
+            </mat-option>
+          </mat-select>
+          <mat-error *ngIf="columnForm.get('position')?.hasError('required')">
+            Please select a position for the column
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Preview Section -->
+      <div class="form-section preview-section" *ngIf="columnForm.get('title')?.value">
+        <div class="section-header">
+          <mat-icon class="section-icon">preview</mat-icon>
+          <h3 class="section-title">Preview</h3>
+        </div>
+        
+        <div class="column-preview">
+          <div class="preview-column">
+            <div class="preview-header">
+              <span class="preview-title">{{columnForm.get('title')?.value}}</span>
+              <span class="preview-count">0</span>
+            </div>
+            <div class="preview-content">
+              <div class="empty-state">
+                <mat-icon>add_circle_outline</mat-icon>
+                <span>Ready for tasks</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Dialog Actions -->
+  <div class="dialog-actions" mat-dialog-actions>
+    <button mat-button 
+            type="button" 
+            (click)="onCancel()" 
+            class="cancel-btn">
+      <mat-icon>cancel</mat-icon>
+      Cancel
+    </button>
+    
+    <button mat-raised-button 
+            color="primary" 
+            type="submit" 
+            (click)="onSubmit()" 
+            [disabled]="!columnForm.valid"
+            class="submit-btn">
+      <mat-icon>add</mat-icon>
+      Add Column
+    </button>
+  </div>
+</div>

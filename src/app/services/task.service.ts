@@ -269,6 +269,182 @@ export class TaskService {
     };
   }
 
+  // Column Management Methods
+
+  // Add a new column
+  addColumn(title: string, position: number): string | null {
+    const columns = [...this.getCurrentColumns()];
+    
+    // Check if we already have 4 columns (maximum allowed)
+    if (columns.length >= 4) {
+      return null; // Cannot add more columns
+    }
+    
+    // Generate unique ID for the new column
+    const newId = this.generateColumnId(title);
+    
+    // Generate color for the column
+    const color = this.generateColumnColor(columns.length);
+    
+    // Create new column
+    const newColumn: Column = {
+      id: newId,
+      title: title.trim(),
+      status: TaskStatus.CUSTOM,
+      position: position,
+      isCustom: true,
+      color: color,
+      tasks: [],
+      createdDate: new Date()
+    };
+
+    // Adjust positions of existing columns
+    columns.forEach(col => {
+      if (col.position >= position) {
+        col.position += 1;
+      }
+    });
+
+    // Insert new column
+    columns.push(newColumn);
+
+    // Sort columns by position
+    columns.sort((a, b) => a.position - b.position);
+
+    this.updateColumns(columns);
+    console.log(`Column "${title}" added at position ${position}`);
+    
+    return newId;
+  }
+
+  // Remove a column (only custom columns can be removed)
+  removeColumn(columnId: string): boolean {
+    const columns = [...this.getCurrentColumns()];
+    const columnIndex = columns.findIndex(col => col.id === columnId);
+    
+    if (columnIndex === -1) {
+      console.error(`Column with ID "${columnId}" not found`);
+      return false;
+    }
+
+    const column = columns[columnIndex];
+    
+    // Prevent removal of default columns
+    if (!column.isCustom) {
+      console.error(`Cannot remove default column "${column.title}"`);
+      return false;
+    }
+
+    // Move tasks to the first available column
+    if (column.tasks.length > 0) {
+      const targetColumn = columns.find(col => col.id !== columnId);
+      if (targetColumn) {
+        targetColumn.tasks.push(...column.tasks);
+        console.log(`Moved ${column.tasks.length} tasks to "${targetColumn.title}"`);
+      }
+    }
+
+    // Remove column
+    columns.splice(columnIndex, 1);
+
+    // Adjust positions of remaining columns
+    columns.forEach(col => {
+      if (col.position > column.position) {
+        col.position -= 1;
+      }
+    });
+
+    this.updateColumns(columns);
+    console.log(`Column "${column.title}" removed`);
+    
+    return true;
+  }
+
+  // Get sorted columns by position
+  getSortedColumns(): Column[] {
+    return this.getCurrentColumns().sort((a, b) => a.position - b.position);
+  }
+
+  // Get existing column titles
+  getColumnTitles(): string[] {
+    return this.getCurrentColumns().map(col => col.title);
+  }
+
+  // Reorder columns
+  reorderColumn(columnId: string, newPosition: number): boolean {
+    const columns = [...this.getCurrentColumns()];
+    const column = columns.find(col => col.id === columnId);
+    
+    if (!column) {
+      console.error(`Column with ID "${columnId}" not found`);
+      return false;
+    }
+
+    const oldPosition = column.position;
+    
+    // Adjust positions
+    if (newPosition > oldPosition) {
+      // Moving forward
+      columns.forEach(col => {
+        if (col.position > oldPosition && col.position <= newPosition) {
+          col.position -= 1;
+        }
+      });
+    } else {
+      // Moving backward
+      columns.forEach(col => {
+        if (col.position >= newPosition && col.position < oldPosition) {
+          col.position += 1;
+        }
+      });
+    }
+
+    // Set new position
+    column.position = newPosition;
+
+    this.updateColumns(columns);
+    console.log(`Column "${column.title}" moved to position ${newPosition}`);
+    
+    return true;
+  }
+
+  // Generate unique column ID
+  private generateColumnId(title: string): string {
+    const baseId = title.toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .substring(0, 20);
+    
+    const existingIds = this.getCurrentColumns().map(col => col.id);
+    let id = baseId;
+    let counter = 1;
+    
+    while (existingIds.includes(id)) {
+      id = `${baseId}-${counter}`;
+      counter++;
+    }
+    
+    return id;
+  }
+
+  // Generate color for new column
+  private generateColumnColor(index: number): string {
+    const colors = [
+      '#9c27b0', // Purple
+      '#ff5722', // Deep Orange
+      '#607d8b', // Blue Grey
+      '#795548', // Brown
+      '#ff9800', // Orange
+      '#4caf50', // Green
+      '#2196f3', // Blue
+      '#e91e63', // Pink
+      '#009688', // Teal
+      '#ffc107'  // Amber
+    ];
+    
+    return colors[index % colors.length];
+  }
+
   // Initial sample data
   private getInitialData(): Column[] {
     return [
@@ -276,6 +452,9 @@ export class TaskService {
         id: 'todo',
         title: 'TO-DO',
         status: TaskStatus.TODO,
+        position: 1,
+        isCustom: false,
+        color: '#ff9800',
         tasks: []
         /* Sample tasks commented out
         tasks: [
@@ -308,6 +487,9 @@ export class TaskService {
         id: 'in-progress',
         title: 'IN PROGRESS',
         status: TaskStatus.IN_PROGRESS,
+        position: 2,
+        isCustom: false,
+        color: '#2196f3',
         tasks: []
         /* Sample tasks commented out
         tasks: [
@@ -340,6 +522,9 @@ export class TaskService {
         id: 'done',
         title: 'DONE',
         status: TaskStatus.DONE,
+        position: 3,
+        isCustom: false,
+        color: '#4caf50',
         tasks: []
         /* Sample tasks commented out
         tasks: [

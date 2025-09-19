@@ -13,8 +13,15 @@ export class ColumnHeaderComponent {
   @Input() title: string = '';
   @Input() taskCount: number = 0;
   @Input() status: TaskStatus = TaskStatus.TODO;
+  @Input() color?: string;
+  @Input() isCustom: boolean = false;
 
   getStatusColor(): string {
+    // Use custom color if provided, otherwise fall back to default colors
+    if (this.color) {
+      return this.color;
+    }
+    
     switch (this.status) {
       case TaskStatus.TODO:
         return '#ff9800'; // Orange
@@ -22,6 +29,8 @@ export class ColumnHeaderComponent {
         return '#2196f3'; // Blue
       case TaskStatus.DONE:
         return '#4caf50'; // Green
+      case TaskStatus.CUSTOM:
+        return '#9c27b0'; // Purple
       default:
         return '#757575'; // Gray
     }

@@ -13,7 +13,8 @@ export interface Task {
 export enum TaskStatus {
   TODO = 'todo',
   IN_PROGRESS = 'in-progress',
-  DONE = 'done'
+  DONE = 'done',
+  CUSTOM = 'custom'
 }
 
 export enum TaskPriority {
@@ -27,6 +28,10 @@ export interface Column {
   title: string;
   status: TaskStatus;
   tasks: Task[];
+  position: number;
+  isCustom?: boolean;
+  color?: string;
+  createdDate?: Date;
 }
 
 export interface KanbanBoard {

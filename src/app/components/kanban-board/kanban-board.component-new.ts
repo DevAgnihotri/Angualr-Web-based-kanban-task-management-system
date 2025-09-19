@@ -4,6 +4,7 @@ import { MaterialModule } from '../../shared/material.module';
 import { ColumnHeaderComponent } from '../column-header/column-header.component';
 import { TaskCardComponent } from '../task-card/task-card.component';
 import { AddTaskDialogComponent } from '../add-task-dialog/add-task-dialog.component';
+import { AddColumnDialogComponent, AddColumnData } from '../add-column-dialog/add-column-dialog.component';
 import { EditTaskDialogComponent } from '../edit-task-dialog/edit-task-dialog.component';
 import { TaskStatus, Column, Task, TaskPriority } from '../../models/task.model';
 import { TaskService } from '../../services/task.service';
@@ -113,46 +114,72 @@ export class KanbanBoardComponent implements OnInit, OnDestroy {
     } else {
       // Different column - transfer task
       const task = event.previousContainer.data[event.previousIndex];
-      
-      // Update task status based on target column
-      const targetColumnId = event.container.id;
-      const newStatus = this.getStatusFromColumnId(targetColumnId);
-      const updatedTask = { ...task, status: newStatus };
-      
-      // Transfer the task
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex
-      );
-      
-      // Update task in service
-      this.taskService.updateTask(updatedTask);
-      this.showSnackBar(`Task moved to ${this.getStatusDisplayName(newStatus)}!`, 'info');
+      const targetColumnId = event.container.id.replace('-list', '');
+      const targetColumn = this.columns.find(col => col.id === targetColumnId);
+
+      if (targetColumn) {
+        const newStatus = targetColumn.status;
+        const updatedTask = { ...task, status: newStatus };
+
+        // Transfer the task
+        transferArrayItem(
+          event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex
+        );
+
+        // Update task in service
+        this.taskService.updateTask(updatedTask);
+        this.showSnackBar(`Task moved to ${targetColumn.title}!`, 'info');
+      }
     }
   }
 
-  private getStatusFromColumnId(columnId: string): TaskStatus {
-    switch (columnId) {
-      case 'todo-list':
-        return TaskStatus.TODO;
-      case 'in-progress-list':
-        return TaskStatus.IN_PROGRESS;
-      case 'done-list':
-        return TaskStatus.DONE;
-      default:
-        return TaskStatus.TODO;
-    }
+  // Template helpers expected by kanban-board.component.html
+  getColumnMenuClass(column: Column): string {
+    if (column.status === TaskStatus.TODO) return 'todo-item';
+    if (column.status === TaskStatus.IN_PROGRESS) return 'progress-item';
+    if (column.status === TaskStatus.DONE) return 'done-item';
+    return 'custom-item';
   }
 
-  private getStatusDisplayName(status: TaskStatus): string {
-    switch (status) {
-      case TaskStatus.TODO: return 'To Do';
-      case TaskStatus.IN_PROGRESS: return 'In Progress';
-      case TaskStatus.DONE: return 'Done';
-      default: return status;
+  getColumnIcon(column: Column): string {
+    if (column.status === TaskStatus.TODO) return 'circle';
+    if (column.status === TaskStatus.IN_PROGRESS) return 'schedule';
+    if (column.status === TaskStatus.DONE) return 'check_circle';
+    return 'label';
+  }
+
+  onAddColumn(): void {
+    const currentColumns = this.taskService.getCurrentColumns();
+    if (currentColumns.length >= 4) {
+      this.showSnackBar('Maximum of 4 columns allowed!', 'warn');
+      return;
     }
+
+    const existingTitles = this.taskService.getColumnTitles();
+
+    const dialogRef = this.dialog.open(AddColumnDialogComponent, {
+      width: '500px',
+      maxWidth: '90vw',
+      data: {
+        existingColumns: existingTitles
+      } as AddColumnData,
+      disableClose: true,
+      panelClass: 'custom-dialog-container'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        const newColumnId = this.taskService.addColumn(result.title, result.position);
+        if (newColumnId) {
+          this.showSnackBar(`Column "${result.title}" added successfully!`, 'success');
+        } else {
+          this.showSnackBar('Failed to add column. Maximum of 4 columns allowed!', 'warn');
+        }
+      }
+    });
   }
 
   getConnectedDropLists(): string[] {

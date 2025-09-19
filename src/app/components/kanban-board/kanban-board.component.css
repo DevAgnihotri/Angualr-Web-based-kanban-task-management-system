@@ -16,10 +16,33 @@
   flex: 1 1 auto;
 }
 
+/* Action Buttons Container */
+.action-buttons {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 .add-task-btn {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.add-column-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.add-column-btn:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
 /* Add Task Menu Styling */
@@ -79,6 +102,26 @@
   background-color: rgba(76, 175, 80, 0.1);
 }
 
+/* Custom column menu item styling */
+.custom-item:hover {
+  background-color: rgba(102, 126, 234, 0.1);
+}
+
+/* Add column menu item styling */
+.add-column-item {
+  border-top: 1px solid #e0e0e0;
+  margin-top: 4px;
+  font-weight: 500;
+}
+
+.add-column-item .menu-icon {
+  color: #667eea;
+}
+
+.add-column-item:hover {
+  background-color: rgba(102, 126, 234, 0.1);
+}
+
 /* Kanban Board Container */
 .kanban-container {
   padding: 24px;
@@ -92,6 +135,8 @@
   gap: 24px;
   min-width: 900px; /* Ensure minimum width for 3 columns */
   align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 16px;
 }
 
 /* Kanban Columns */
@@ -99,6 +144,8 @@
   flex: 1;
   min-width: 280px;
   max-width: 350px;
+  display: flex;
+  flex-direction: column;
 }
 
 .column-card {
