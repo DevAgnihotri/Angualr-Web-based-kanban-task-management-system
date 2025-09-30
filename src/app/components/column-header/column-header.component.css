@@ -12,6 +12,30 @@
   gap: 12px;
 }
 
+/* Drag Handle Styles */
+.drag-handle {
+  cursor: grab;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.drag-handle:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+  background-color: rgba(0, 0, 0, 0.08);
+}
+
+.drag-icon {
+  font-size: 18px;
+  color: #666;
+}
+
 .status-indicator {
   width: 4px;
   height: 32px;
@@ -28,6 +52,13 @@
   letter-spacing: 0.5px;
 }
 
+/* Header Actions Container */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .task-count-badge {
   color: white !important;
   font-weight: 600;
@@ -38,4 +69,22 @@
   align-items: center;
   justify-content: center;
   border-radius: 14px;
+}
+
+/* Delete Button Styles */
+.delete-column-btn {
+  width: 32px;
+  height: 32px;
+  line-height: 32px;
+  transition: all 0.2s ease;
+}
+
+.delete-column-btn:hover {
+  background-color: rgba(244, 67, 54, 0.1);
+  transform: scale(1.05);
+}
+
+.delete-icon {
+  font-size: 18px;
+  color: #f44336;
 }

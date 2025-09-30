@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../../shared/material.module';
 import { TaskStatus } from '../../models/task.model';
@@ -15,6 +15,12 @@ export class ColumnHeaderComponent {
   @Input() status: TaskStatus = TaskStatus.TODO;
   @Input() color?: string;
   @Input() isCustom: boolean = false;
+  @Input() columnId: string = '';
+  @Input() canDelete: boolean = true;
+  @Input() showDragHandle: boolean = true;
+  
+  @Output() deleteColumn = new EventEmitter<string>();
+  @Output() columnDragStart = new EventEmitter<void>();
 
   getStatusColor(): string {
     // Use custom color if provided, otherwise fall back to default colors
@@ -34,5 +40,15 @@ export class ColumnHeaderComponent {
       default:
         return '#757575'; // Gray
     }
+  }
+
+  onDeleteColumn(): void {
+    if (this.canDelete && confirm(`Are you sure you want to delete the "${this.title}" column? All tasks in this column will be moved to the first available column.`)) {
+      this.deleteColumn.emit(this.columnId);
+    }
+  }
+
+  onDragStart(): void {
+    this.columnDragStart.emit();
   }
 }

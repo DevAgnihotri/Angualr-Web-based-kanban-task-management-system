@@ -188,6 +188,54 @@ export class KanbanBoardComponent implements OnInit, OnDestroy {
     return this.columns.some(col => col.isCustom);
   }
 
+  canDeleteColumn(column: Column): boolean {
+    // Don't allow deletion if it's the last column or if there are less than 2 columns
+    return this.columns.length > 1;
+  }
+
+  onDeleteColumn(columnId: string): void {
+    const columnToDelete = this.columns.find(col => col.id === columnId);
+    if (!columnToDelete) return;
+
+    // Find a target column to move tasks to (first available column that's not being deleted)
+    const targetColumn = this.columns.find(col => col.id !== columnId);
+    
+    if (targetColumn && columnToDelete.tasks.length > 0) {
+      // Move all tasks from the deleted column to the target column
+      const tasksToMove = [...columnToDelete.tasks];
+      tasksToMove.forEach(task => {
+        // Update task status to match target column
+        const updatedTask = { ...task, status: targetColumn.status };
+        this.taskService.updateTask(updatedTask);
+      });
+      
+      this.showSnackBar(
+        `${tasksToMove.length} task(s) moved to "${targetColumn.title}" column`, 
+        'info'
+      );
+    }
+
+    // Delete the column
+    this.taskService.deleteColumn(columnId);
+    this.showSnackBar(`Column "${columnToDelete.title}" deleted successfully!`, 'warn');
+  }
+
+  onColumnDrop(event: CdkDragDrop<Column[]>): void {
+    if (event.previousIndex !== event.currentIndex) {
+      // Reorder columns array
+      moveItemInArray(this.columns, event.previousIndex, event.currentIndex);
+      
+      // Update positions in the columns
+      this.columns.forEach((column, index) => {
+        column.position = index;
+      });
+      
+      // Update the service with new order
+      this.taskService.updateColumnOrder(this.columns);
+      this.showSnackBar('Column order updated!', 'success');
+    }
+  }
+
   private showSnackBar(message: string, type: 'success' | 'warn' | 'info'): void {
     const config = {
       duration: 3000,

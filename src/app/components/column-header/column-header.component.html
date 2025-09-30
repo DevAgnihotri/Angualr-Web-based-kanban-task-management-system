@@ -1,9 +1,28 @@
 <div class="column-header">
   <div class="header-content">
+    <!-- Drag Handle -->
+    <div class="drag-handle" *ngIf="showDragHandle" (mousedown)="onDragStart()">
+      <mat-icon class="drag-icon">drag_indicator</mat-icon>
+    </div>
+    
     <div class="status-indicator" [style.background-color]="getStatusColor()"></div>
     <h3 class="column-title">{{ title }}</h3>
-    <mat-chip class="task-count-badge" [style.background-color]="getStatusColor()">
-      {{ taskCount }}
-    </mat-chip>
+    
+    <div class="header-actions">
+      <mat-chip class="task-count-badge" [style.background-color]="getStatusColor()">
+        {{ taskCount }}
+      </mat-chip>
+      
+      <!-- Delete Button -->
+      <button 
+        mat-icon-button 
+        *ngIf="canDelete" 
+        (click)="onDeleteColumn()"
+        class="delete-column-btn"
+        matTooltip="Delete Column"
+        aria-label="Delete column">
+        <mat-icon class="delete-icon">delete</mat-icon>
+      </button>
+    </div>
   </div>
 </div>

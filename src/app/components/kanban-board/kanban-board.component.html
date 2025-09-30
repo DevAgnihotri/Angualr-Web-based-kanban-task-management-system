@@ -14,7 +14,7 @@
       [matMenuTriggerFor]="addTaskMenu"
       aria-label="Add new task">
       <mat-icon>add</mat-icon>
-      Add Task
+      Add
       <mat-icon>arrow_drop_down</mat-icon>
     </button>
     
@@ -49,10 +49,15 @@
 
 <!-- Kanban Board Container -->
 <div class="kanban-container">
-  <div class="kanban-board">
+  <div 
+    class="kanban-board"
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    [cdkDropListData]="columns"
+    (cdkDropListDropped)="onColumnDrop($event)">
     
     <!-- Loop through each column -->
-    <div class="kanban-column" *ngFor="let column of columns">
+    <div class="kanban-column" *ngFor="let column of columns" cdkDrag>
       
       <!-- Column Header -->
       <app-column-header 
@@ -60,7 +65,11 @@
         [taskCount]="getTaskCount(column.id)"
         [status]="column.status"
         [color]="column.color"
-        [isCustom]="column.isCustom || false">
+        [isCustom]="column.isCustom || false"
+        [columnId]="column.id"
+        [canDelete]="canDeleteColumn(column)"
+        [showDragHandle]="true"
+        (deleteColumn)="onDeleteColumn($event)">
       </app-column-header>
       
       <!-- Column Content -->

@@ -455,8 +455,8 @@ export class TaskService {
         position: 1,
         isCustom: false,
         color: '#ff9800',
-        tasks: []
-        /* Sample tasks commented out
+        //tasks: []
+        // Sample tasks commented out
         tasks: [
           {
             id: 'task-1',
@@ -480,7 +480,7 @@ export class TaskService {
             tags: ['research', 'ux']
           }
         ]
-        */
+        
         
       },
       {
@@ -490,8 +490,8 @@ export class TaskService {
         position: 2,
         isCustom: false,
         color: '#2196f3',
-        tasks: []
-        /* Sample tasks commented out
+        //tasks: []
+        // Sample tasks commented out
         tasks: [
           {
             id: 'task-3',
@@ -515,7 +515,7 @@ export class TaskService {
             tags: ['testing', 'unit-tests']
           }
         ]
-        */
+        
         
       },
       {
@@ -525,8 +525,8 @@ export class TaskService {
         position: 3,
         isCustom: false,
         color: '#4caf50',
-        tasks: []
-        /* Sample tasks commented out
+        //tasks: []
+        // Sample tasks commented out
         tasks: [
           {
             id: 'task-5',
@@ -540,9 +540,35 @@ export class TaskService {
             tags: ['setup', 'git', 'ci-cd']
           }
         ]
-        */
-        
       }
     ];
+  }
+
+  // Delete a column and handle its tasks
+  deleteColumn(columnId: string): void {
+    const columns = [...this.getCurrentColumns()];
+    const columnIndex = columns.findIndex(col => col.id === columnId);
+    
+    if (columnIndex !== -1) {
+      // Remove the column
+      columns.splice(columnIndex, 1);
+      
+      // Update positions for remaining columns
+      columns.forEach((column, index) => {
+        column.position = index;
+      });
+      
+      this.updateColumns(columns);
+    }
+  }
+
+  // Update column order after drag and drop
+  updateColumnOrder(newColumnOrder: Column[]): void {
+    const updatedColumns = newColumnOrder.map((column, index) => ({
+      ...column,
+      position: index
+    }));
+    
+    this.updateColumns(updatedColumns);
   }
 }
