@@ -78,8 +78,13 @@ src/app/services/
 - **Visual Column Indicators:** Color-coded menu items matching column themes
 - **Smart Menu Logic:** Contextual "Add to [Column Name]" labeling
 
+<div align="center">
+
 ![Add Task Menu](Screenshots/mil_2/Add_task_menu.png)
+
 _Enhanced Add Task button with dropdown menu showing all available columns for task placement_
+
+</div>
 
 **Implementation Details:**
 
@@ -185,11 +190,21 @@ class TaskService {
 - **4-Column Limit:** Enforced maximum with user feedback
 - **Integration with Add Task Menu:** New columns immediately available
 
+<div align="center">
+
 ![Create Column Dialog](Screenshots/mil_2/Create_column_dialog.png)
+
 _Column creation dialog with validation and configuration options_
 
+</div>
+
+<div align="center">
+
 ![New Column Created](Screenshots/mil_2/New_column_result.png)
+
 _Successfully created custom column integrated into the board layout_
+
+</div>
 
 **Implementation Details:**
 
@@ -258,8 +273,13 @@ addColumn(title: string, position?: number): string | null {
 - **Constraint Enforcement:** Prevention of last column deletion
 - **User Feedback:** Snackbar notifications with migration details
 
+<div align="center">
+
 ![Delete Column Confirmation](Screenshots/mil_2/Delete_column.png)
+
 _Column deletion with confirmation dialog and task migration explanation_
+
+</div>
 
 **Implementation Architecture:**
 
@@ -317,8 +337,13 @@ onDeleteColumn(columnId: string): void {
 - **State Synchronization:** Service-level order updates
 - **Smooth Animations:** CSS transitions with Material Design timing
 
+<div align="center">
+
 ![Column Drag and Drop](Screenshots/mil_2/Column_drag_drop.png)
+
 _Column reordering in action with visual drag feedback and drop indicators_
+
+</div>
 
 **CDK Implementation:**
 
