@@ -41,8 +41,15 @@ testem.log
 .DS_Store
 Thumbs.db
 
-# Documentation and planning files
-KANBAN-PROJECT-PLANNER.md
-Steps_based_report.md
-COMPONENT-GUIDE.md
-STEP-*-COMPLETION-REPORT.md
+# Documentation and planning files (now in guides/ folder)
+guides/KANBAN-PROJECT-PLANNER.md
+guides/Steps_based_report.md
+guides/COMPONENT-GUIDE.md
+guides/STEP-*-COMPLETION-REPORT.md
+guides/branch_push_helper.md
+
+# Database
+prisma/dev.db
+prisma/dev.db-journal
+
+/src/generated/prisma

@@ -3,18 +3,22 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { Task, TaskStatus, TaskPriority, Column } from '../models/task.model';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID, Inject } from '@angular/core';
+import { ApiService } from './api.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
-  private columnsSubject = new BehaviorSubject<Column[]>(this.getInitialData());
+  private columnsSubject = new BehaviorSubject<Column[]>([]);
   public columns$ = this.columnsSubject.asObservable();
 
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
-    // Load data from localStorage if available (only in browser)
+  constructor(
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private apiService: ApiService
+  ) {
+    // Load data from database
     if (isPlatformBrowser(this.platformId)) {
-      this.loadFromStorage();
+      this.loadFromDatabase();
     }
   }
 
@@ -30,95 +34,106 @@ export class TaskService {
 
   // Add a new task to specified column
   addTask(task: Task, columnId: string): void {
-    const columns = [...this.getCurrentColumns()];
-    const columnIndex = columns.findIndex(col => col.id === columnId);
+    const taskData = {
+      title: task.title,
+      description: task.description,
+      status: task.status,
+      priority: task.priority,
+      columnId: columnId,
+      dueDate: task.dueDate,
+      assignee: task.assignee,
+      tags: task.tags
+    };
     
-    if (columnIndex !== -1) {
-      columns[columnIndex] = {
-        ...columns[columnIndex],
-        tasks: [...columns[columnIndex].tasks, task]
-      };
-      
-      this.updateColumns(columns);
-      console.log(`Task "${task.title}" added to column "${columnId}"`);
-    }
+    this.apiService.createTask(taskData).subscribe({
+      next: (createdTask) => {
+        const columns = [...this.getCurrentColumns()];
+        const columnIndex = columns.findIndex(col => col.id === columnId);
+        
+        if (columnIndex !== -1) {
+          columns[columnIndex] = {
+            ...columns[columnIndex],
+            tasks: [...columns[columnIndex].tasks, createdTask]
+          };
+          
+          this.columnsSubject.next(columns);
+          console.log(`Task "${task.title}" added to column "${columnId}"`);
+        }
+      },
+      error: (err) => {
+        console.error('Error adding task:', err);
+      }
+    });
   }
 
   // Update an existing task
   updateTask(updatedTask: Task): void {
     const columns = [...this.getCurrentColumns()];
-    let taskFound = false;
+    let oldColumnId = '';
 
-    // Find and update the task in any column
-    for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
-      const taskIndex = columns[columnIndex].tasks.findIndex(task => task.id === updatedTask.id);
-      
+    // Find the current column of the task
+    for (const column of columns) {
+      const taskIndex = column.tasks.findIndex(task => task.id === updatedTask.id);
       if (taskIndex !== -1) {
-        const oldStatus = columns[columnIndex].tasks[taskIndex].status;
-        const newStatus = updatedTask.status;
-        
-        // If status changed, move task to appropriate column
-        if (oldStatus !== newStatus) {
-          // Remove from current column
-          columns[columnIndex] = {
-            ...columns[columnIndex],
-            tasks: columns[columnIndex].tasks.filter(task => task.id !== updatedTask.id)
-          };
-          
-          // Add to new column
-          const targetColumnIndex = columns.findIndex(col => col.status === newStatus);
-          if (targetColumnIndex !== -1) {
-            columns[targetColumnIndex] = {
-              ...columns[targetColumnIndex],
-              tasks: [...columns[targetColumnIndex].tasks, updatedTask]
-            };
-          }
-        } else {
-          // Update in same column
-          columns[columnIndex] = {
-            ...columns[columnIndex],
-            tasks: columns[columnIndex].tasks.map(task => 
-              task.id === updatedTask.id ? updatedTask : task
-            )
-          };
-        }
-        
-        taskFound = true;
+        oldColumnId = column.id;
         break;
       }
     }
 
-    if (taskFound) {
-      this.updateColumns(columns);
-      console.log(`Task "${updatedTask.title}" updated`);
-    }
+    // Determine new column ID based on status
+    const newColumnId = columns.find(col => col.status === updatedTask.status)?.id || oldColumnId;
+
+    const taskData = {
+      title: updatedTask.title,
+      description: updatedTask.description,
+      status: updatedTask.status,
+      priority: updatedTask.priority,
+      columnId: newColumnId,
+      dueDate: updatedTask.dueDate,
+      assignee: updatedTask.assignee,
+      tags: updatedTask.tags
+    };
+
+    this.apiService.updateTask(updatedTask.id, taskData).subscribe({
+      next: (updated) => {
+        // Reload all columns to reflect the change
+        this.loadFromDatabase();
+        console.log(`Task "${updatedTask.title}" updated`);
+      },
+      error: (err) => {
+        console.error('Error updating task:', err);
+      }
+    });
   }
 
   // Delete a task
   deleteTask(taskId: string): void {
-    const columns = [...this.getCurrentColumns()];
-    let taskDeleted = false;
-    let deletedTaskTitle = '';
+    this.apiService.deleteTask(taskId).subscribe({
+      next: () => {
+        const columns = [...this.getCurrentColumns()];
+        let deletedTaskTitle = '';
 
-    // Find and remove the task from any column
-    for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
-      const taskIndex = columns[columnIndex].tasks.findIndex(task => task.id === taskId);
-      
-      if (taskIndex !== -1) {
-        deletedTaskTitle = columns[columnIndex].tasks[taskIndex].title;
-        columns[columnIndex] = {
-          ...columns[columnIndex],
-          tasks: columns[columnIndex].tasks.filter(task => task.id !== taskId)
-        };
-        taskDeleted = true;
-        break;
+        // Find and remove the task from any column
+        for (let columnIndex = 0; columnIndex < columns.length; columnIndex++) {
+          const taskIndex = columns[columnIndex].tasks.findIndex(task => task.id === taskId);
+          
+          if (taskIndex !== -1) {
+            deletedTaskTitle = columns[columnIndex].tasks[taskIndex].title;
+            columns[columnIndex] = {
+              ...columns[columnIndex],
+              tasks: columns[columnIndex].tasks.filter(task => task.id !== taskId)
+            };
+            break;
+          }
+        }
+
+        this.columnsSubject.next(columns);
+        console.log(`Task "${deletedTaskTitle}" deleted`);
+      },
+      error: (err) => {
+        console.error('Error deleting task:', err);
       }
-    }
-
-    if (taskDeleted) {
-      this.updateColumns(columns);
-      console.log(`Task "${deletedTaskTitle}" deleted`);
-    }
+    });
   }
 
   // Get a specific task by ID
@@ -165,85 +180,89 @@ export class TaskService {
     );
   }
 
-  // Update columns and save to storage
+  // Update columns and save to database
   private updateColumns(columns: Column[]): void {
     this.columnsSubject.next(columns);
-    this.saveToStorage();
+    // Data is already saved via API calls, no need for additional save
   }
 
-  // Save data to localStorage
-  private saveToStorage(): void {
+  // Load data from database
+  private loadFromDatabase(): void {
     if (!isPlatformBrowser(this.platformId)) {
-      return; // Skip if not in browser
+      return;
     }
     
-    try {
-      const data = this.getCurrentColumns();
-      localStorage.setItem('kanban-data', JSON.stringify(data));
-      console.log('Data saved to localStorage');
-    } catch (error) {
-      console.error('Error saving to localStorage:', error);
-    }
-  }
-
-  // Load data from localStorage
-  private loadFromStorage(): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return; // Skip if not in browser
-    }
-    
-    try {
-      const savedData = localStorage.getItem('kanban-data');
-      if (savedData) {
-        const columns = JSON.parse(savedData);
-        // Convert date strings back to Date objects
-        const processedColumns = columns.map((column: Column) => ({
-          ...column,
-          tasks: column.tasks.map((task: any) => ({
-            ...task,
-            createdDate: new Date(task.createdDate),
-            dueDate: task.dueDate ? new Date(task.dueDate) : undefined
-          }))
-        }));
-        this.columnsSubject.next(processedColumns);
-        console.log('Data loaded from localStorage');
+    this.apiService.getColumns().subscribe({
+      next: (columns) => {
+        if (columns.length === 0) {
+          // Initialize database with sample data if empty
+          this.apiService.initializeDatabase().subscribe({
+            next: () => {
+              this.loadFromDatabase(); // Reload after initialization
+            },
+            error: (err) => {
+              console.error('Error initializing database:', err);
+            }
+          });
+        } else {
+          this.columnsSubject.next(columns);
+          console.log('Data loaded from database');
+        }
+      },
+      error: (err) => {
+        console.error('Error loading from database:', err);
       }
-    } catch (error) {
-      console.error('Error loading from localStorage:', error);
-      // Fall back to initial data if loading fails
-      this.columnsSubject.next(this.getInitialData());
-    }
+    });
+  }
+
+  // Save data to localStorage (deprecated - using database now)
+  private saveToStorage(): void {
+    // Deprecated: Now using database
+    console.log('Using database storage instead of localStorage');
+  }
+
+  // Load data from localStorage (deprecated - using database now)
+  private loadFromStorage(): void {
+    // Deprecated: Now using database
+    console.log('Using database storage instead of localStorage');
   }
 
   // Clear all data (useful for reset functionality)
   clearAllData(): void {
-    const emptyColumns = this.getInitialData().map(column => ({
-      ...column,
-      tasks: []
-    }));
-    this.updateColumns(emptyColumns);
-    console.log('All task data cleared');
+    this.apiService.clearAllData().subscribe({
+      next: () => {
+        this.columnsSubject.next([]);
+        console.log('All task data cleared');
+      },
+      error: (err) => {
+        console.error('Error clearing data:', err);
+      }
+    });
   }
 
-  // Clear localStorage data
+  // Clear localStorage data (deprecated)
   clearStorageData(): void {
-    if (!isPlatformBrowser(this.platformId)) {
-      return; // Skip if not in browser
-    }
-    
-    try {
-      localStorage.removeItem('kanban-data');
-      console.log('localStorage data cleared');
-    } catch (error) {
-      console.error('Error clearing localStorage:', error);
-    }
+    console.log('Using database storage instead of localStorage');
   }
 
   // Reset to initial sample data
   resetToSampleData(): void {
-    const initialData = this.getInitialData();
-    this.updateColumns(initialData);
-    console.log('Data reset to sample data');
+    this.apiService.clearAllData().subscribe({
+      next: () => {
+        this.apiService.initializeDatabase().subscribe({
+          next: () => {
+            this.loadFromDatabase();
+            console.log('Data reset to sample data');
+          },
+          error: (err) => {
+            console.error('Error initializing database:', err);
+          }
+        });
+      },
+      error: (err) => {
+        console.error('Error clearing data:', err);
+      }
+    });
   }
 
   // Get statistics about tasks
@@ -277,44 +296,43 @@ export class TaskService {
     
     // Check if we already have 4 columns (maximum allowed)
     if (columns.length >= 4) {
-      return null; // Cannot add more columns
+      return null;
     }
     
-    // Generate unique ID for the new column
-    const newId = this.generateColumnId(title);
-    
-    // Generate color for the column
     const color = this.generateColumnColor(columns.length);
     
-    // Create new column
-    const newColumn: Column = {
-      id: newId,
+    const columnData = {
       title: title.trim(),
       status: TaskStatus.CUSTOM,
       position: position,
       isCustom: true,
-      color: color,
-      tasks: [],
-      createdDate: new Date()
+      color: color
     };
 
-    // Adjust positions of existing columns
-    columns.forEach(col => {
-      if (col.position >= position) {
-        col.position += 1;
+    this.apiService.createColumn(columnData).subscribe({
+      next: (newColumn) => {
+        const updatedColumns = [...columns];
+        
+        // Adjust positions of existing columns
+        updatedColumns.forEach(col => {
+          if (col.position >= position) {
+            col.position += 1;
+          }
+        });
+
+        // Add new column
+        updatedColumns.push(newColumn);
+        updatedColumns.sort((a, b) => a.position - b.position);
+
+        this.columnsSubject.next(updatedColumns);
+        console.log(`Column "${title}" added at position ${position}`);
+      },
+      error: (err) => {
+        console.error('Error adding column:', err);
       }
     });
-
-    // Insert new column
-    columns.push(newColumn);
-
-    // Sort columns by position
-    columns.sort((a, b) => a.position - b.position);
-
-    this.updateColumns(columns);
-    console.log(`Column "${title}" added at position ${position}`);
     
-    return newId;
+    return 'pending'; // Return temporary ID
   }
 
   // Remove a column (only custom columns can be removed)
@@ -335,27 +353,25 @@ export class TaskService {
       return false;
     }
 
-    // Move tasks to the first available column
-    if (column.tasks.length > 0) {
-      const targetColumn = columns.find(col => col.id !== columnId);
-      if (targetColumn) {
-        targetColumn.tasks.push(...column.tasks);
-        console.log(`Moved ${column.tasks.length} tasks to "${targetColumn.title}"`);
-      }
-    }
+    this.apiService.deleteColumn(columnId).subscribe({
+      next: () => {
+        // Remove column from local state
+        columns.splice(columnIndex, 1);
 
-    // Remove column
-    columns.splice(columnIndex, 1);
+        // Adjust positions of remaining columns
+        columns.forEach(col => {
+          if (col.position > column.position) {
+            col.position -= 1;
+          }
+        });
 
-    // Adjust positions of remaining columns
-    columns.forEach(col => {
-      if (col.position > column.position) {
-        col.position -= 1;
+        this.columnsSubject.next(columns);
+        console.log(`Column "${column.title}" removed`);
+      },
+      error: (err) => {
+        console.error('Error removing column:', err);
       }
     });
-
-    this.updateColumns(columns);
-    console.log(`Column "${column.title}" removed`);
     
     return true;
   }
@@ -546,20 +562,26 @@ export class TaskService {
 
   // Delete a column and handle its tasks
   deleteColumn(columnId: string): void {
-    const columns = [...this.getCurrentColumns()];
-    const columnIndex = columns.findIndex(col => col.id === columnId);
-    
-    if (columnIndex !== -1) {
-      // Remove the column
-      columns.splice(columnIndex, 1);
-      
-      // Update positions for remaining columns
-      columns.forEach((column, index) => {
-        column.position = index;
-      });
-      
-      this.updateColumns(columns);
-    }
+    this.apiService.deleteColumn(columnId).subscribe({
+      next: () => {
+        const columns = [...this.getCurrentColumns()];
+        const columnIndex = columns.findIndex(col => col.id === columnId);
+        
+        if (columnIndex !== -1) {
+          columns.splice(columnIndex, 1);
+          
+          // Update positions for remaining columns
+          columns.forEach((column, index) => {
+            column.position = index;
+          });
+          
+          this.columnsSubject.next(columns);
+        }
+      },
+      error: (err) => {
+        console.error('Error deleting column:', err);
+      }
+    });
   }
 
   // Update column order after drag and drop
@@ -569,6 +591,13 @@ export class TaskService {
       position: index
     }));
     
-    this.updateColumns(updatedColumns);
+    this.apiService.reorderColumns(updatedColumns).subscribe({
+      next: (columns) => {
+        this.columnsSubject.next(columns);
+      },
+      error: (err) => {
+        console.error('Error reordering columns:', err);
+      }
+    });
   }
 }

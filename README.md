@@ -1,15 +1,173 @@
-# MILESTONE 2: Advanced Column Management & Enhanced User Experience
+# Angular Kanban Task Management System
 
 <div align="center">
 
-![Angular](https://img.shields.io/badge/Angular-17+-DD0031?style=for-the-badge&logo=angular&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-19+-DD0031?style=for-the-badge&logo=angular&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
 ![Material](https://img.shields.io/badge/Material_UI-007FFF?style=for-the-badge&logo=mui&logoColor=white)
-![LocalStorage](https://img.shields.io/badge/Local_Storage-FF6B6B?style=for-the-badge&logo=html5&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)
 
-**Date:** October 1, 2025
+**Full-Stack Kanban Board with Real Database**
+
+**Date:** October 3, 2025
 
 </div>
+
+---
+
+## 🎉 **DATABASE INTEGRATION COMPLETE!**
+
+This project now features **full database integration** using Prisma ORM and SQLite, replacing the previous localStorage implementation.
+
+### **🚀 Quick Start**
+
+#### **Step 1: Start Backend Server**
+
+```bash
+npm run backend
+```
+
+✅ Backend runs on: `http://localhost:3000`
+
+#### **Step 2: Start Angular Frontend**
+
+```bash
+npm start
+```
+
+✅ Frontend runs on: `http://localhost:4200`
+
+#### **Step 3: Open Browser**
+
+Navigate to: `http://localhost:4200`
+
+**Your Kanban board is now connected to a real database! 🎉**
+
+---
+
+## 📚 **Documentation**
+
+All detailed guides are in the **[guides/](guides/)** folder:
+
+- **[START_HERE.md](guides/START_HERE.md)** - Quick overview to get started
+- **[QUICK_START.md](guides/QUICK_START.md)** - Get started in 3 steps
+- **[DATABASE_INTEGRATION_SUMMARY.md](guides/DATABASE_INTEGRATION_SUMMARY.md)** - Complete feature list
+- **[DATABASE_SETUP.md](guides/DATABASE_SETUP.md)** - Detailed setup guide
+- **[ARCHITECTURE.md](guides/ARCHITECTURE.md)** - System architecture & data flow
+- **[API_TESTING.md](guides/API_TESTING.md)** - API testing examples
+- **[MILESTONE_1.md](guides/MILESTONE_1.md)** - Original milestone documentation
+- **[CHECKLIST.md](guides/CHECKLIST.md)** - Completion checklist
+- **Milestone 2 Documentation** - Below (Advanced column management features)
+
+---
+
+## 🗄️ **Database Features**
+
+### **What's New**
+
+✅ **Prisma ORM** - Type-safe database queries  
+✅ **SQLite Database** - File-based, no external server needed  
+✅ **REST API Backend** - Express.js with full CRUD operations  
+✅ **Persistent Storage** - Data survives browser restarts  
+✅ **Professional Architecture** - Frontend/Backend separation  
+✅ **Real-time Sync** - Automatic data synchronization  
+✅ **Data Relationships** - Tasks belong to Columns (cascade delete)
+
+### **Technology Stack**
+
+**Frontend:**
+
+- Angular 19.2
+- Angular Material
+- RxJS
+- TypeScript
+
+**Backend:**
+
+- Node.js + Express
+- Prisma ORM
+- SQLite Database
+- CORS enabled
+
+### **Database Schema**
+
+```prisma
+model Column {
+  id          String   @id @default(uuid())
+  title       String
+  status      String
+  position    Int
+  isCustom    Boolean  @default(false)
+  color       String?
+  createdDate DateTime @default(now())
+  tasks       Task[]
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  status      String
+  priority    String
+  createdDate DateTime @default(now())
+  dueDate     DateTime?
+  assignee    String?
+  tags        String?
+  columnId    String
+  column      Column   @relation(fields: [columnId], references: [id], onDelete: Cascade)
+}
+```
+
+---
+
+## 🌐 **API Endpoints**
+
+### **Columns**
+
+- `GET /api/columns` - Get all columns with tasks
+- `POST /api/columns` - Create new column
+- `PUT /api/columns/:id` - Update column
+- `DELETE /api/columns/:id` - Delete column
+- `PUT /api/columns/reorder` - Reorder columns
+
+### **Tasks**
+
+- `GET /api/tasks` - Get all tasks
+- `GET /api/tasks/:id` - Get single task
+- `POST /api/tasks` - Create new task
+- `PUT /api/tasks/:id` - Update task
+- `DELETE /api/tasks/:id` - Delete task
+
+### **Utility**
+
+- `POST /api/init` - Initialize database with sample data
+- `DELETE /api/clear` - Clear all data
+
+---
+
+## 🔧 **Database Tools**
+
+### **View Database GUI**
+
+```bash
+npx prisma studio
+```
+
+Opens GUI at `http://localhost:5555`
+
+### **Reset Database**
+
+```bash
+npx prisma migrate reset
+```
+
+### **Create Migration**
+
+```bash
+npx prisma migrate dev --name migration_name
+```
 
 ---
 
